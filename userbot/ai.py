@@ -1,9 +1,12 @@
 import aiohttp
 import urllib.parse
-from pyrogram import filters
 
-async def fetch_ai(url, prompt):
-    query = urllib.parse.urlencode({"text": prompt})
+async def fetch_ai(url, prompt, extra_params=None):
+    params = {"text": prompt}
+    if extra_params:
+        params.update(extra_params)
+
+    query = urllib.parse.urlencode(params)
     full_url = f"{url}?{query}"
 
     try:
@@ -36,7 +39,11 @@ async def gpt_handler(client, message):
     prompt = message.text.split(None, 1)[1]
     await message.edit("🤖 GPT-5 sedang berpikir...")
 
-    response = await fetch_ai("https://api.gimita.id/api/ai/gpt5", prompt)
+    response = await fetch_ai(
+        "https://api.gimita.id/api/ai/gpt5",
+        prompt
+    )
+
     await message.edit(f"🤖 GPT-5\n━━━━━━━━━━━━━━━━━━\n\n{response}")
 
 async def gemini_handler(client, message):
@@ -46,7 +53,11 @@ async def gemini_handler(client, message):
     prompt = message.text.split(None, 1)[1]
     await message.edit("🤖 Gemini sedang berpikir...")
 
-    response = await fetch_ai("https://api.gimita.id/api/ai/gemini", prompt)
+    response = await fetch_ai(
+        "https://api.gimita.id/api/ai/gemini",
+        prompt
+    )
+
     await message.edit(f"🤖 GEMINI AI\n━━━━━━━━━━━━━━━━━━\n\n{response}")
 
 async def claude_handler(client, message):
@@ -56,7 +67,11 @@ async def claude_handler(client, message):
     prompt = message.text.split(None, 1)[1]
     await message.edit("🤖 Claude sedang berpikir...")
 
-    response = await fetch_ai("https://api.gimita.id/api/ai/claude", prompt)
+    response = await fetch_ai(
+        "https://api.gimita.id/api/ai/claude",
+        prompt
+    )
+
     await message.edit(f"🤖 CLAUDE AI\n━━━━━━━━━━━━━━━━━━\n\n{response}")
 
 async def perplexity_handler(client, message):
@@ -66,5 +81,10 @@ async def perplexity_handler(client, message):
     prompt = message.text.split(None, 1)[1]
     await message.edit("🤖 Perplexity sedang mencari jawaban...")
 
-    response = await fetch_ai("https://api.gimita.id/api/ai/chatai", prompt)
+    response = await fetch_ai(
+        "https://api.gimita.id/api/ai/chatai",
+        prompt,
+        {"model": "perplexity"}
+    )
+
     await message.edit(f"🤖 PERPLEXITY AI\n━━━━━━━━━━━━━━━━━━\n\n{response}")
