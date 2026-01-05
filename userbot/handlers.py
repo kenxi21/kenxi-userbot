@@ -1170,12 +1170,19 @@ async def clear_logs_handler(client, message):
     await message.edit("🗑️ **Semua log berhasil dihapus!**")
 
 async def autoreply_handler(client, message):
+async def autoreply_handler(client, message):
     settings = load_settings()
     if not settings.get("aktif"):
         return
 
     user = getattr(message, "from_user", None)
     if not user:
+        return
+
+    if message.chat and message.chat.id in [777000, 42777]:
+        return
+
+    if getattr(user, "is_verified", False):
         return
 
     if getattr(user, "is_bot", False):
@@ -1553,6 +1560,7 @@ def install_ubot_handlers(ubot):
     asyncio.create_task(monitor_loop(ubot))
 
     print("[INFO] All handlers installed successfully!")
+
 
 
 
