@@ -135,7 +135,7 @@ async def ping_ubot(client, message):
 async def status_ubot(client, message):
     settings = load_settings()
     me = await client.get_me()
-    status_ar = "✅ Aktif" if settings.get("aktif") else "❌ Nonaktif"
+    status_ar = "✅ Aktif" if client.is_connected else "❌ Nonaktif"
     caption = (
         "👤 **PROFIL PENGGUNA**\n"
         "━━━━━━━━━━━━━━━━━━\n"
@@ -1553,5 +1553,6 @@ def install_ubot_handlers(ubot):
     asyncio.create_task(monitor_loop(ubot))
 
     print("[INFO] All handlers installed successfully!")
+
 
 
