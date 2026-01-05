@@ -3,7 +3,7 @@ import urllib.parse
 from pyrogram import filters
 
 async def get_ai_response(model, prompt):
-    base_url = "https://api.gimita.id/api/ai/copilot"
+    base_url = "https://api.gimita.id/api/ai/gpt5"
     query = urllib.parse.urlencode({
         "text": prompt
     })
