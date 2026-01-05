@@ -542,7 +542,7 @@ async def dspam_handler(client, message):
     try:
         base_delay = float(message.command[1])
         count = int(message.command[2])
-        spam_text = " ".join(message.command[3:])
+        spam_text = message.text.split(None, 3)[3]
     except (ValueError, IndexError) as e:
         print(f"[ERROR] dspam_handler input error: {e}")
         return await message.edit("❌ Input tidak valid.")
@@ -1553,4 +1553,5 @@ def install_ubot_handlers(ubot):
     asyncio.create_task(monitor_loop(ubot))
 
     print("[INFO] All handlers installed successfully!")
+
 
