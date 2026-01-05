@@ -536,7 +536,7 @@ async def restart_ubot(client, message):
     os.execl(sys.executable, sys.executable, *sys.argv)
 
 async def dspam_handler(client, message):
-    if len(message.command) < 3:
+    if len(message.command) < 4:
         return await message.edit("❌ **Format:** `.dspam [delay] [count] [text]`")
 
     try:
@@ -1551,4 +1551,5 @@ def install_ubot_handlers(ubot):
 
     print("[INFO] Starting background loops...")
     asyncio.create_task(monitor_loop(ubot))
+
     print("[INFO] All handlers installed successfully!")
