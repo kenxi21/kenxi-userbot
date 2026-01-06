@@ -200,6 +200,277 @@ async def quotes_islami_handler(client, message):
     selected = random.choice(quotes)
     await message.edit(f"💡 **QUOTE ISLAMI**\n━━━━━━━━━━━━━━━━━━\n\n_{selected}_")
 
+from pyrogram import Client, filters
+
+def split_text(text, max_len=3900):
+    parts = []
+    while len(text) > max_len:
+        split_at = text.rfind("\n", 0, max_len)
+        if split_at == -1:
+            split_at = max_len
+        parts.append(text[:split_at])
+        text = text[split_at:]
+    parts.append(text)
+    return parts
+
+KISAH_NABI = {
+    "adam": {
+        "nabi": "Adam",
+        "tahun_kelahiran": "Awal penciptaan manusia",
+        "tempat_kelahiran": "Surga",
+        "usia": "930 tahun",
+        "kisah": (
+            "Nabi Adam adalah manusia pertama yang diciptakan oleh Allah SWT dari tanah.\n\n"
+            "Allah mengajarkan kepadanya nama-nama segala sesuatu dan menjadikannya khalifah di bumi.\n\n"
+            "Karena godaan iblis, Nabi Adam dan Hawa melanggar larangan Allah dan diturunkan ke bumi. "
+            "Namun Nabi Adam segera bertaubat dan Allah menerima taubatnya."
+        )
+    },
+    "idris": {
+        "nabi": "Idris",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "Babilonia",
+        "usia": "-",
+        "kisah": (
+            "Nabi Idris dikenal sebagai nabi yang cerdas dan tekun dalam ibadah.\n\n"
+            "Beliau mengajarkan tulisan, ilmu pengetahuan, dan perhitungan kepada umatnya.\n\n"
+            "Allah mengangkat derajat Nabi Idris ke tempat yang tinggi sebagai bentuk kemuliaan."
+        )
+    },
+    "nuh": {
+        "nabi": "Nuh",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "Mesopotamia",
+        "usia": "950 tahun",
+        "kisah": (
+            "Nabi Nuh diutus untuk menyeru kaumnya agar menyembah Allah dan meninggalkan berhala.\n\n"
+            "Karena kaumnya ingkar, Allah memerintahkan Nabi Nuh membuat bahtera.\n\n"
+            "Banjir besar datang dan hanya Nabi Nuh serta orang-orang beriman yang selamat."
+        )
+    },
+    "hud": {
+        "nabi": "Hud",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "Ahqaf",
+        "usia": "-",
+        "kisah": (
+            "Nabi Hud diutus kepada kaum Ad yang sombong dan kuat.\n\n"
+            "Karena mereka menolak dakwah, Allah menurunkan azab berupa angin topan yang menghancurkan mereka."
+        )
+    },
+    "shalih": {
+        "nabi": "Shalih",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "Hijr",
+        "usia": "-",
+        "kisah": (
+            "Nabi Shalih diutus kepada kaum Tsamud.\n\n"
+            "Allah memberi mukjizat berupa unta betina, namun kaum Tsamud membunuhnya.\n\n"
+            "Akibatnya mereka dibinasakan oleh azab Allah."
+        )
+    },
+    "ibrahim": {
+        "nabi": "Ibrahim",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "Ur, Babilonia",
+        "usia": "175 tahun",
+        "kisah": (
+            "Nabi Ibrahim adalah bapak para nabi dan teladan tauhid.\n\n"
+            "Beliau menghancurkan berhala dan diuji dengan perintah menyembelih putranya.\n\n"
+            "Karena ketaatan, Allah menggantinya dengan seekor domba."
+        )
+    },
+    "luth": {
+        "nabi": "Luth",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "Sodom",
+        "usia": "-",
+        "kisah": (
+            "Nabi Luth diutus kepada kaum yang melakukan perbuatan keji.\n\n"
+            "Karena mereka ingkar, Allah membinasakan kaum tersebut kecuali Nabi Luth dan pengikutnya."
+        )
+    },
+    "ismail": {
+        "nabi": "Ismail",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "Makkah",
+        "usia": "137 tahun",
+        "kisah": (
+            "Nabi Ismail adalah putra Nabi Ibrahim yang sangat taat kepada Allah.\n\n"
+            "Beliau membantu membangun Ka'bah bersama ayahnya."
+        )
+    },
+    "ishaq": {
+        "nabi": "Ishaq",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "Kan'an",
+        "usia": "180 tahun",
+        "kisah": (
+            "Nabi Ishaq adalah putra Nabi Ibrahim.\n\n"
+            "Beliau meneruskan dakwah tauhid kepada kaumnya."
+        )
+    },
+    "yaqub": {
+        "nabi": "Ya'qub",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "Kan'an",
+        "usia": "147 tahun",
+        "kisah": (
+            "Nabi Ya'qub dikenal dengan kesabaran dan kasih sayangnya.\n\n"
+            "Beliau adalah ayah dari Nabi Yusuf."
+        )
+    },
+    "yusuf": {
+        "nabi": "Yusuf",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "Kan'an",
+        "usia": "110 tahun",
+        "kisah": (
+            "Nabi Yusuf dikenal karena ketampanan dan kesabarannya.\n\n"
+            "Ia dibuang ke sumur, dijual sebagai budak, hingga menjadi pejabat Mesir.\n\n"
+            "Beliau memaafkan saudara-saudaranya."
+        )
+    },
+    "ayyub": {
+        "nabi": "Ayyub",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "-",
+        "usia": "-",
+        "kisah": (
+            "Nabi Ayyub diuji dengan penyakit dan kehilangan harta.\n\n"
+            "Namun beliau tetap sabar dan Allah mengembalikan nikmatnya."
+        )
+    },
+    "syuaib": {
+        "nabi": "Syuaib",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "Madyan",
+        "usia": "-",
+        "kisah": (
+            "Nabi Syuaib diutus kepada kaum Madyan yang curang dalam berdagang.\n\n"
+            "Karena ingkar, mereka dibinasakan."
+        )
+    },
+    "musa": {
+        "nabi": "Musa",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "Mesir",
+        "usia": "120 tahun",
+        "kisah": (
+            "Nabi Musa diutus kepada Fir'aun yang zalim.\n\n"
+            "Dengan mukjizat tongkat, beliau membebaskan Bani Israil."
+        )
+    },
+    "harun": {
+        "nabi": "Harun",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "Mesir",
+        "usia": "-",
+        "kisah": (
+            "Nabi Harun adalah saudara Nabi Musa.\n\n"
+            "Beliau membantu Nabi Musa dalam berdakwah."
+        )
+    },
+    "dzulkifli": {
+        "nabi": "Dzulkifli",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "-",
+        "usia": "-",
+        "kisah": (
+            "Nabi Dzulkifli dikenal sebagai nabi yang sabar dan adil dalam memimpin umatnya."
+        )
+    },
+    "daud": {
+        "nabi": "Daud",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "Palestina",
+        "usia": "100 tahun",
+        "kisah": (
+            "Nabi Daud adalah raja sekaligus nabi.\n\n"
+            "Beliau diberi kitab Zabur dan suara yang merdu."
+        )
+    },
+    "sulaiman": {
+        "nabi": "Sulaiman",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "Palestina",
+        "usia": "-",
+        "kisah": (
+            "Nabi Sulaiman diberi kekuasaan atas jin, manusia, dan hewan.\n\n"
+            "Beliau adalah raja yang sangat adil."
+        )
+    },
+    "ilyas": {
+        "nabi": "Ilyas",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "-",
+        "usia": "-",
+        "kisah": (
+            "Nabi Ilyas menyeru kaumnya untuk meninggalkan penyembahan berhala Baal."
+        )
+    },
+    "ilyasa": {
+        "nabi": "Ilyasa",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "-",
+        "usia": "-",
+        "kisah": (
+            "Nabi Ilyasa melanjutkan dakwah Nabi Ilyas dengan penuh kesabaran."
+        )
+    },
+    "yunus": {
+        "nabi": "Yunus",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "Niniwe",
+        "usia": "-",
+        "kisah": (
+            "Nabi Yunus meninggalkan kaumnya dan ditelan ikan besar.\n\n"
+            "Setelah bertaubat, Allah menyelamatkannya."
+        )
+    },
+    "zakaria": {
+        "nabi": "Zakaria",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "Palestina",
+        "usia": "-",
+        "kisah": (
+            "Nabi Zakaria memohon keturunan di usia tua.\n\n"
+            "Allah mengabulkan dengan kelahiran Nabi Yahya."
+        )
+    },
+    "yahya": {
+        "nabi": "Yahya",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "Palestina",
+        "usia": "-",
+        "kisah": (
+            "Nabi Yahya dikenal sebagai nabi yang suci dan taat sejak kecil."
+        )
+    },
+    "isa": {
+        "nabi": "Isa",
+        "tahun_kelahiran": "-",
+        "tempat_kelahiran": "Betlehem",
+        "usia": "-",
+        "kisah": (
+            "Nabi Isa lahir tanpa ayah atas izin Allah.\n\n"
+            "Beliau diberi mukjizat menyembuhkan penyakit dan menghidupkan orang mati."
+        )
+    },
+    "muhammad": {
+        "nabi": "Muhammad",
+        "tahun_kelahiran": "570 M",
+        "tempat_kelahiran": "Makkah",
+        "usia": "63 tahun",
+        "kisah": (
+            "Nabi Muhammad SAW adalah nabi terakhir dan penutup para nabi.\n\n"
+            "Beliau menerima Al-Qur'an sebagai pedoman hidup umat manusia.\n\n"
+            "Akhlaknya menjadi teladan terbaik sepanjang masa."
+        )
+    }
+}
+
+@Client.on_message(filters.command("kisah", prefixes=".") & filters.me)
 async def kisah_nabi_handler(client, message):
     if len(message.command) < 2:
         return await message.edit(
@@ -208,42 +479,29 @@ async def kisah_nabi_handler(client, message):
         )
 
     nama_nabi = message.command[1].lower()
-    await message.edit(f"📖 **Mencari kisah Nabi {nama_nabi.capitalize()}...**")
 
-    url = "https://raw.githubusercontent.com/zerodytrash/prophet-api/master/data.json"
-    data = await get_json(url)
-
-    if not data or not isinstance(data, list):
-        return await message.edit("❌ **Gagal mengambil data kisah nabi.**")
-
-    kisah = None
-    for item in data:
-        if item.get("nabi", "").lower() == nama_nabi:
-            kisah = item
-            break
-
-    if not kisah:
+    if nama_nabi not in KISAH_NABI:
         return await message.edit(
-            f"❌ **Kisah Nabi {nama_nabi.capitalize()} tidak ditemukan.**"
+            f"❌ **Kisah Nabi {nama_nabi.capitalize()} belum tersedia.**"
         )
 
-    name = kisah.get("nabi", nama_nabi).capitalize()
-    birth = kisah.get("tahun_kelahiran", "-")
-    place = kisah.get("tempat_kelahiran", "-")
-    age = kisah.get("usia", "-")
-    story = kisah.get("kisah", "-")
+    data = KISAH_NABI[nama_nabi]
 
     header = (
-        f"📜 **KISAH NABI {name.upper()}**\n"
+        f"📜 **KISAH NABI {data['nabi'].upper()}**\n"
         f"━━━━━━━━━━━━━━━━━━\n"
-        f"👶 **Tahun Kelahiran:** {birth}\n"
-        f"📍 **Tempat Kelahiran:** {place}\n"
-        f"⏳ **Usia:** {age}\n"
+        f"👶 **Tahun Kelahiran:** {data['tahun_kelahiran']}\n"
+        f"📍 **Tempat Kelahiran:** {data['tempat_kelahiran']}\n"
+        f"⏳ **Usia:** {data['usia']}\n"
         f"━━━━━━━━━━━━━━━━━━\n\n"
     )
 
-    parts = split_text(story)
+    parts = split_text(data["kisah"])
 
+    await message.edit(header + parts[0])
+
+    for i, part in enumerate(parts[1:], start=2):
+        await message.reply(f"📖 **Lanjutan ({i}/{len(parts)})**\n\n{part}")
     await message.edit(header + parts[0])
 
     for i, part in enumerate(parts[1:], start=2):
@@ -280,5 +538,6 @@ async def rukun_iman_handler(client, message):
         "6️⃣ **Iman kepada Qada dan Qadar**"
     )
     await message.edit(text)
+
 
 
