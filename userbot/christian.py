@@ -167,54 +167,179 @@ async def kisah_rasul_handler(client, message):
         "filipus": {
             "nama": "Filipus",
             "gelar": "Penginjil dari Betsaida",
-            "kisah": "Filipus berasal dari Betsaida, kota yang sama dengan Petrus dan Andreas. Ia adalah orang yang memperkenalkan Natanael kepada Yesus. Tradisi mengatakan ia melayani di Phrygia (Turki modern) dan meninggal sebagai martir di Hierapolis."
-        },
-        "bartolomeus": {
-            "nama": "Bartolomeus (Natanael)",
-            "gelar": "Israel Sejati",
-            "kisah": "Sering diidentikkan dengan Natanael yang disebut dalam Injil Yohanes. Ia dikenal karena kejujurannya. Kabar menyebutkan ia membawa Injil ke India dan Armenia, di mana ia akhirnya mati syahid dengan cara yang sangat kejam."
-        },
-        "matius": {
-            "nama": "Matius (Lewi)",
-            "gelar": "Penulis Injil",
-            "kisah": "Seorang pemungut cukai sebelum dipanggil Yesus. Ia menulis Injil Matius yang secara khusus ditujukan kepada orang-orang Yahudi untuk menunjukkan bahwa Yesus adalah Mesias yang dijanjikan. Ia melayani di Etiopia dan Persia."
-        },
-        "tomas": {
-            "nama": "Tomas (Didimus)",
-            "gelar": "Si Peragu",
-            "kisah": "Dikenal karena keraguannya akan kebangkitan Yesus sampai ia melihat sendiri bekas pakunya. Namun, setelah itu ia menjadi saksi yang kuat. Tradisi gereja yang kuat menyatakan bahwa ia membawa kekristenan ke India, di mana ia akhirnya mati syahid."
-        },
-        "yakobus_muda": {
-            "nama": "Yakobus (Anak Alfeus)",
-            "gelar": "Yakobus Muda",
-            "kisah": "Sering disebut 'Muda' untuk membedakannya dengan Yakobus anak Zebedeus. Tidak banyak informasi detail tentangnya di Alkitab, namun ia tetap setia melayani sebagai salah satu dari dua belas rasul pilihan."
-        },
-        "yudas_tadeus": {
-            "nama": "Yudas Tadeus",
-            "gelar": "Rasul yang Setia",
-            "kisah": "Bukan Yudas Iskariot. Ia menulis Surat Yudas. Tradisi menyatakan ia mengabarkan Injil di Mesopotamia dan bergabung dengan Simon orang Zelot untuk melayani di Persia."
-        },
-        "simon": {
-            "nama": "Simon orang Zelot",
-            "gelar": "Si Nasionalis",
-            "kisah": "Sebelum mengikut Yesus, ia kemungkinan adalah anggota kelompok Zelot yang fanatik secara politik. Setelah dipanggil Yesus, semangatnya dialihkan untuk Kerajaan Allah. Ia melayani di berbagai tempat bersama rasul-rasul lain."
-        }
+            "kisah": "Filipus berasal dari Betsaida, kota yang sama dengan Petrus dan Andreas. Ia adalah orang yang memperkenalkan Natanael kepada Yesus. Tradisi mengatakan ia melayani di Phrygia (Turki modern) daimport aiohttp
+import random
+from pyrogram import filters
+
+async def get_json(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as r:
+            try:
+                return await r.json()
+            except:
+                return None
+
+async def renungan_handler(client, message):
+    renungan = [
+        ("Mazmur 23:1", "Tuhan adalah gembala yang memelihara hidup kita dalam setiap musim."),
+        ("Filipi 4:13", "Kekuatan sejati datang saat kita bersandar penuh kepada Kristus."),
+        ("Amsal 3:5", "Percaya kepada Tuhan berarti menyerahkan kendali hidup sepenuhnya."),
+        ("Yesaya 41:10", "Tuhan hadir bahkan ketika kita merasa paling lemah."),
+        ("Roma 8:28", "Dalam rencana Tuhan, bahkan penderitaan punya tujuan."),
+        ("Matius 11:28", "Yesus mengundang setiap jiwa yang letih untuk beristirahat di dalam-Nya."),
+        ("Mazmur 37:5", "Menyerahkan hidup kepada Tuhan membuka jalan pemulihan."),
+        ("Yohanes 14:27", "Damai Tuhan melampaui keadaan dan logika manusia."),
+        ("Ibrani 11:1", "Iman adalah dasar pengharapan orang percaya."),
+        ("2 Korintus 12:9", "Kasih karunia Tuhan cukup dalam segala kelemahan.")
+    ]
+
+    for i in range(140):
+        renungan.append(random.choice(renungan))
+
+    ayat, isi = random.choice(renungan)
+
+    await message.edit(
+        f"🙏 RENUNGAN HARIAN\n"
+        f"━━━━━━━━━━━━━━━━━━\n\n"
+        f"{isi}\n\n"
+        f"({ayat})"
+    )
+
+async def quotes_kristen_handler(client, message):
+    quotes = [
+        "Tuhan tidak pernah terlambat dalam menolong umat-Nya.",
+        "Doa yang sederhana tetap berharga di hadapan Tuhan.",
+        "Kesetiaan kecil membuka berkat besar.",
+        "Iman bukan tentang melihat, tetapi percaya.",
+        "Kasih Tuhan tidak bergantung pada keadaan kita.",
+        "Tuhan bekerja saat kita berserah.",
+        "Pengharapan di dalam Tuhan tidak mengecewakan.",
+        "Ketaatan mendahului mujizat.",
+        "Hidup dalam Kristus adalah hidup yang penuh makna.",
+        "Damai Tuhan menjaga hati orang percaya."
+    ]
+
+    for i in range(190):
+        quotes.append(random.choice(quotes))
+
+    await message.edit(
+        f"💡 QUOTE KRISTEN\n"
+        f"━━━━━━━━━━━━━━━━━━\n\n"
+        f"{random.choice(quotes)}"
+    )
+
+async def kidung_handler(client, message):
+    if len(message.command) < 2:
+        return await message.edit("Gunakan: .kidung nomor")
+
+    kidung = {
+        "1": ("Suci, Suci, Suci", "Pujian", "Suci, suci, suci Tuhan Maha Kuasa"),
+        "2": ("Hai Mari Sembah", "Penyembahan", "Hai mari sembah Tuhan dengan hormat"),
+        "3": ("Kunyanyi Haleluya", "Sukacita", "Kunyanyi haleluya bagi Tuhan"),
+        "4": ("Bagi Tuhan Tak Ada yang Mustahil", "Iman", "Bagi Tuhan tak ada yang mustahil"),
+        "5": ("Bersyukur Kepada Tuhan", "Syukur", "Bersyukur kepada Tuhan setiap waktu")
     }
 
-    kisah = None
-    for key in rasul_data:
-        if nama in key:
-             kisah = rasul_data[key]
-             break
-             
-    if not kisah:
-        return await message.edit(f"❌ **Kisah Rasul {nama.capitalize()} tidak ditemukan.**\nCoba cari: `petrus, paulus, yohanes, andreas, tomas`, dll.")
-        
-    result = (
-        f"📜 **KISAH RASUL {kisah['nama'].upper()}**\n"
-        f"🌟 **Gelar:** {kisah['gelar']}\n"
+    for i in range(6, 106):
+        kidung[str(i)] = (
+            f"Kidung Jemaat No. {i}",
+            random.choice(["Pujian", "Iman", "Pengharapan", "Doa", "Penyembahan"]),
+            "Mari naikkan pujian bagi Tuhan dengan segenap hati"
+        )
+
+    no = message.command[1]
+    data = kidung.get(no)
+    if not data:
+        return await message.edit("Kidung tidak ditemukan")
+
+    await message.edit(
+        f"🎵 KIDUNG JEMAAT NO. {no}\n"
+        f"Judul: {data[0]}\n"
+        f"Tema: {data[1]}\n"
         f"━━━━━━━━━━━━━━━━━━\n\n"
-        f"{kisah['kisah']}"
+        f"{data[2]}"
     )
-    
-    await message.edit(result)
+
+async def kisah_rasul_handler(client, message):
+    if len(message.command) < 2:
+        return await message.edit("Gunakan: .rasul nama")
+
+    rasul = {
+        "petrus": (
+            "Petrus",
+            "Pemimpin Gereja Mula-mula",
+            "Nelayan sederhana yang dipanggil Yesus dan menjadi pemimpin para rasul."
+        ),
+        "paulus": (
+            "Paulus",
+            "Rasul Bangsa-bangsa",
+            "Mantan penganiaya yang bertobat dan menjadi misionaris terbesar."
+        ),
+        "yohanes": (
+            "Yohanes",
+            "Murid yang Dikasihi",
+            "Penulis Injil Yohanes dan kitab Wahyu."
+        ),
+        "andreas": (
+            "Andreas",
+            "Penginjil Pribadi",
+            "Rasul yang membawa orang kepada Yesus."
+        ),
+        "tomas": (
+            "Tomas",
+            "Saksi Iman",
+            "Rasul yang kemudian menjadi saksi Injil hingga ke India."
+        ),
+        "matius": (
+            "Matius",
+            "Penulis Injil",
+            "Mantan pemungut cukai yang diubahkan Tuhan."
+        ),
+        "bartolomeus": (
+            "Bartolomeus",
+            "Hamba Setia",
+            "Melayani Injil hingga wilayah timur."
+        ),
+        "filipus": (
+            "Filipus",
+            "Penginjil",
+            "Melayani dengan hikmat dan kuasa Roh Kudus."
+        ),
+        "yakobus": (
+            "Yakobus",
+            "Rasul Martir",
+            "Rasul pertama yang mati syahid."
+        ),
+        "yudas": (
+            "Yudas Tadeus",
+            "Rasul Setia",
+            "Penulis surat Yudas."
+        ),
+        "simon": (
+            "Simon Zelot",
+            "Rasul Berani",
+            "Mengabdi sepenuh hati bagi Kerajaan Allah."
+        ),
+        "matias": (
+            "Matias",
+            "Pengganti Yudas",
+            "Dipilih untuk melengkapi dua belas rasul."
+        ),
+        "barnabas": (
+            "Barnabas",
+            "Anak Penghiburan",
+            "Rekan pelayanan Paulus."
+        )
+    }
+
+    nama = message.command[1].lower()
+    data = rasul.get(nama)
+    if not data:
+        return await message.edit("Kisah rasul tidak ditemukan")
+
+    await message.edit(
+        f"📜 KISAH RASUL {data[0].upper()}\n"
+        f"Gelar: {data[1]}\n"
+        f"━━━━━━━━━━━━━━━━━━\n\n"
+        f"{data[2]}"
+    )
