@@ -202,46 +202,54 @@ async def quotes_islami_handler(client, message):
 
 async def kisah_nabi_handler(client, message):
     if len(message.command) < 2:
-        return await message.edit("❌ **Gunakan:** `.kisah [nama nabi]`\nContoh: `.kisah yusuf`")
-    
+        return await message.edit(
+            "❌ **Gunakan:** `.kisah [nama nabi]`\n"
+            "Contoh: `.kisah yusuf`"
+        )
+
     nama_nabi = message.command[1].lower()
     await message.edit(f"📖 **Mencari kisah Nabi {nama_nabi.capitalize()}...**")
 
     url = "https://raw.githubusercontent.com/zerodytrash/prophet-api/master/data.json"
     data = await get_json(url)
-    
-    if not data:
-        return await message.edit("❌ **Gagal mengambil data kisah nabi.**")
-        
-    kisah = None
-    for k in data:
-        if isinstance(k, dict) and nama_nabi in k.get('name', '').lower():
-             kisah = k
-             break
-             
-    if not kisah:
-        return await message.edit(f"❌ **Kisah Nabi {nama_nabi.capitalize()} tidak ditemukan.**")
-        
-    name = kisah.get('name', nama_nabi).capitalize()
-    birth = kisah.get('thn_kelahiran', '-')
-    place = kisah.get('tmp', '-')
-    age = kisah.get('usia', '-')
-    story = kisah.get('description', kisah.get('story', ''))
-    
-    if len(story) > 3000:
-        story = story[:3000] + "... (Baca selengkapnya di internet)"
 
-    result = (
+    if not data or not isinstance(data, list):
+        return await message.edit("❌ **Gagal mengambil data kisah nabi.**")
+
+    kisah = None
+    for item in data:
+        if item.get("nabi", "").lower() == nama_nabi:
+            kisah = item
+            break
+
+    if not kisah:
+        return await message.edit(
+            f"❌ **Kisah Nabi {nama_nabi.capitalize()} tidak ditemukan.**"
+        )
+
+    name = kisah.get("nabi", nama_nabi).capitalize()
+    birth = kisah.get("tahun_kelahiran", "-")
+    place = kisah.get("tempat_kelahiran", "-")
+    age = kisah.get("usia", "-")
+    story = kisah.get("kisah", "-")
+
+    header = (
         f"📜 **KISAH NABI {name.upper()}**\n"
         f"━━━━━━━━━━━━━━━━━━\n"
-        f"👶 **Kelahiran:** {birth}\n"
-        f"📍 **Tempat:** {place}\n"
+        f"👶 **Tahun Kelahiran:** {birth}\n"
+        f"📍 **Tempat Kelahiran:** {place}\n"
         f"⏳ **Usia:** {age}\n"
         f"━━━━━━━━━━━━━━━━━━\n\n"
-        f"{story}"
     )
-    
-    await message.edit(result)
+
+    parts = split_text(story)
+
+    await message.edit(header + parts[0])
+
+    for i, part in enumerate(parts[1:], start=2):
+        await message.reply(
+            f"📖 **Lanjutan ({i}/{len(parts)})**\n\n{part}"
+        )
 
 async def rukun_islam_handler(client, message):
     text = (
@@ -272,4 +280,5 @@ async def rukun_iman_handler(client, message):
         "6️⃣ **Iman kepada Qada dan Qadar**"
     )
     await message.edit(text)
+
 
