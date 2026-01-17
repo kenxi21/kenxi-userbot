@@ -5,7 +5,7 @@ KENXI Userbot adalah Telegram Userbot premium yang dilengkapi dengan **Multi-Ses
 
 ## 📱 Contact & Support
 
-- **Owner:** [@MAU_BOBO](https://t.me/MAU_BOBO)
+- **Owner:** [@CaaLio](https://t.me/CaaLio)
 - **Channel:** @kenxiubot
 - **Support:** DM owner untuk bantuan
 
@@ -30,4 +30,5 @@ KENXI Userbot adalah Telegram Userbot premium yang dilengkapi dengan **Multi-Ses
 ⭐ **If you like this project, give it a star!** ⭐
 
 </div>
+
 
